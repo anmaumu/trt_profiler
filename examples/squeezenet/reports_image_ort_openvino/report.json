@@ -1,0 +1,366 @@
+{
+  "metadata": {
+    "model": {
+      "name": "squeezenet1_1",
+      "source_path": "examples/squeezenet/assets/model.onnx",
+      "format": "onnx",
+      "tasks": [
+        "classification"
+      ]
+    },
+    "variants": [
+      "ort_cpu",
+      "openvino_cpu"
+    ],
+    "comparisons": [
+      "ort_cpu_vs_openvino_cpu"
+    ]
+  },
+  "summary": {
+    "comparisons": {
+      "ort_cpu_vs_openvino_cpu": {
+        "raw": {
+          "logits_tensor_diff": {
+            "logits": {
+              "shape_match_rate": 1.0,
+              "max_abs_error": 3.337860107421875e-06,
+              "max_abs_error_max": 3.337860107421875e-06,
+              "mean_abs_error": 5.43264817679301e-07,
+              "mean_abs_error_max": 5.43264817679301e-07,
+              "rmse": 7.430420377009677e-07,
+              "rmse_max": 7.430420377009677e-07,
+              "max_rel_error": 5.445856467778641e-05,
+              "max_rel_error_max": 5.445856467778641e-05,
+              "mean_rel_error": 4.304065565584531e-07,
+              "mean_rel_error_max": 4.304065565584531e-07,
+              "cosine_similarity": 0.9999999999999764,
+              "allclose_rate": 1.0,
+              "nan_count": 0.0,
+              "nan_count_max": 0.0,
+              "inf_count": 0.0,
+              "inf_count_max": 0.0,
+              "p95_abs_error": 1.430511474609375e-06,
+              "p95_abs_error_max": 1.430511474609375e-06,
+              "p99_abs_error": 2.384185791015625e-06,
+              "p99_abs_error_max": 2.384185791015625e-06
+            }
+          }
+        }
+      }
+    }
+  },
+  "tables": {
+    "metric_summary": [
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "shape_match_rate",
+        "value": 1.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "max_abs_error",
+        "value": 3.337860107421875e-06
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "max_abs_error_max",
+        "value": 3.337860107421875e-06
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "mean_abs_error",
+        "value": 5.43264817679301e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "mean_abs_error_max",
+        "value": 5.43264817679301e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "rmse",
+        "value": 7.430420377009677e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "rmse_max",
+        "value": 7.430420377009677e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "max_rel_error",
+        "value": 5.445856467778641e-05
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "max_rel_error_max",
+        "value": 5.445856467778641e-05
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "mean_rel_error",
+        "value": 4.304065565584531e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "mean_rel_error_max",
+        "value": 4.304065565584531e-07
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "cosine_similarity",
+        "value": 0.9999999999999764
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "allclose_rate",
+        "value": 1.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "nan_count",
+        "value": 0.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "nan_count_max",
+        "value": 0.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "inf_count",
+        "value": 0.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "inf_count_max",
+        "value": 0.0
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "p95_abs_error",
+        "value": 1.430511474609375e-06
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "p95_abs_error_max",
+        "value": 1.430511474609375e-06
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "p99_abs_error",
+        "value": 2.384185791015625e-06
+      },
+      {
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "output": "logits",
+        "stat": "p99_abs_error_max",
+        "value": 2.384185791015625e-06
+      }
+    ],
+    "per_sample": [
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "shape_match",
+        "value": true,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "max_abs_error",
+        "value": 3.337860107421875e-06,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "mean_abs_error",
+        "value": 5.43264817679301e-07,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "rmse",
+        "value": 7.430420377009677e-07,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "max_rel_error",
+        "value": 5.445856467778641e-05,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "mean_rel_error",
+        "value": 4.304065565584531e-07,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "cosine_similarity",
+        "value": 0.9999999999999764,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "allclose_rate",
+        "value": 1.0,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "nan_count",
+        "value": 0.0,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "inf_count",
+        "value": 0.0,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "p95_abs_error",
+        "value": 1.430511474609375e-06,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      },
+      {
+        "sample_id": "sample_0001",
+        "comparison": "ort_cpu_vs_openvino_cpu",
+        "stage": "raw",
+        "metric": "logits_tensor_diff",
+        "stat": "p99_abs_error",
+        "value": 2.384185791015625e-06,
+        "output": "logits",
+        "threshold": null,
+        "status": null
+      }
+    ],
+    "per_output": [],
+    "per_layer": [],
+    "failed_cases": [],
+    "worst_cases": []
+  },
+  "artifacts": {
+    "plots": [],
+    "failed_case_files": []
+  }
+}

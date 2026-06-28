@@ -1,0 +1,89 @@
+version: 1
+
+common:
+  model:
+    name: squeezenet1_1
+    source_path: examples/squeezenet/assets/model.onnx
+    format: onnx
+    tasks:
+      - classification
+
+  variants:
+    - name: ort_cpu
+      backend: onnxruntime
+      role: reference
+      builder:
+        class: trt_profiler.builders.OnnxPassthroughBuilder
+        config: {}
+      runner:
+        class: trt_profiler.runners.OnnxRuntimeRunner
+        config:
+          providers:
+            - CPUExecutionProvider
+
+    - name: openvino_cpu
+      backend: openvino
+      role: target
+      builder:
+        class: trt_profiler.builders.OpenVinoBuilder
+        config: {}
+      runner:
+        class: trt_profiler.runners.OpenVinoRunner
+        config:
+          device: CPU
+
+  dataset:
+    type: image_folder
+    config:
+      path: examples/squeezenet/images
+      extensions:
+        - .png
+        - .jpg
+
+  comparisons:
+    - name: ort_cpu_vs_openvino_cpu
+      reference: ort_cpu
+      target: openvino_cpu
+
+  input_mapping:
+    ort_cpu:
+      data: input
+    openvino_cpu:
+      data: input
+
+  output_mapping:
+    ort_cpu:
+      logits: squeezenet0_flatten0_reshape0
+    openvino_cpu:
+      logits: squeezenet0_flatten0_reshape0
+
+  metrics:
+    raw:
+      - name: logits_tensor_diff
+        class: trt_profiler.metrics.TensorDiffMetric
+        config:
+          outputs:
+            - logits
+          percentiles:
+            - 95
+            - 99
+    post: []
+
+  report:
+    output_dir: examples/squeezenet/reports_image_ort_openvino
+
+preprocess:
+  class: trt_profiler.preprocessors.ImageNetPreprocessor
+  config:
+    input_name: input
+    size:
+      - 224
+      - 224
+    layout: NCHW
+    dtype: float32
+
+postprocessors:
+  - name: identity
+    class: trt_profiler.postprocessors.IdentityPostprocessor
+    config: {}
+

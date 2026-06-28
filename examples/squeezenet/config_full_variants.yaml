@@ -1,0 +1,180 @@
+version: 1
+
+common:
+  model:
+    name: squeezenet1_1
+    source_path: examples/squeezenet/assets/model.onnx
+    format: onnx
+    tasks:
+      - classification
+
+  variants:
+    - name: ort_cpu
+      backend: onnxruntime
+      role: reference
+      builder:
+        class: trt_profiler.builders.OnnxPassthroughBuilder
+        config: {}
+      runner:
+        class: trt_profiler.runners.OnnxRuntimeRunner
+        config:
+          providers:
+            - CPUExecutionProvider
+
+    - name: ort_cuda
+      backend: onnxruntime
+      role: reference
+      builder:
+        class: trt_profiler.builders.OnnxPassthroughBuilder
+        config: {}
+      runner:
+        class: trt_profiler.runners.OnnxRuntimeRunner
+        config:
+          providers:
+            - CUDAExecutionProvider
+            - CPUExecutionProvider
+
+    - name: ort_trt
+      backend: onnxruntime
+      role: target
+      builder:
+        class: trt_profiler.builders.OnnxPassthroughBuilder
+        config: {}
+      runner:
+        class: trt_profiler.runners.OnnxRuntimeRunner
+        config:
+          providers:
+            - TensorRTExecutionProvider
+            - CUDAExecutionProvider
+            - CPUExecutionProvider
+          provider_options:
+            TensorRTExecutionProvider:
+              trt_engine_cache_enable: true
+              trt_engine_cache_path: examples/squeezenet/artifacts/ort_trt_cache
+
+    - name: openvino_cpu
+      backend: openvino
+      role: target
+      builder:
+        class: trt_profiler.builders.OpenVinoBuilder
+        config:
+          cache_dir: examples/squeezenet/artifacts/openvino_cpu
+      runner:
+        class: trt_profiler.runners.OpenVinoRunner
+        config:
+          device: CPU
+
+    - name: trt_fp32
+      backend: tensorrt
+      role: target
+      precision: fp32
+      builder:
+        class: trt_profiler.builders.TensorRTBuilder
+        config:
+          build: true
+          engine_path: examples/squeezenet/artifacts/model_fp32.plan
+          precision: fp32
+      runner:
+        class: trt_profiler.runners.TensorRTRunner
+        config:
+          device_id: 0
+
+    - name: trt_fp16
+      backend: tensorrt
+      role: target
+      precision: fp16
+      builder:
+        class: trt_profiler.builders.TensorRTBuilder
+        config:
+          build: true
+          engine_path: examples/squeezenet/artifacts/model_fp16.plan
+          precision: fp16
+      runner:
+        class: trt_profiler.runners.TensorRTRunner
+        config:
+          device_id: 0
+
+  dataset:
+    type: npz_folder
+    config:
+      path: examples/squeezenet/inputs
+      pattern: "*.npz"
+
+  comparisons:
+    - name: ort_cpu_vs_ort_cuda
+      reference: ort_cpu
+      target: ort_cuda
+    - name: ort_cuda_vs_ort_trt
+      reference: ort_cuda
+      target: ort_trt
+    - name: ort_cuda_vs_openvino_cpu
+      reference: ort_cuda
+      target: openvino_cpu
+    - name: ort_cuda_vs_trt_fp32
+      reference: ort_cuda
+      target: trt_fp32
+    - name: ort_cuda_vs_trt_fp16
+      reference: ort_cuda
+      target: trt_fp16
+    - name: trt_fp32_vs_trt_fp16
+      reference: trt_fp32
+      target: trt_fp16
+
+  input_mapping:
+    ort_cpu:
+      data: input_tensor
+    ort_cuda:
+      data: input_tensor
+    ort_trt:
+      data: input_tensor
+    openvino_cpu:
+      data: input_tensor
+    trt_fp32:
+      data: input_tensor
+    trt_fp16:
+      data: input_tensor
+
+  output_mapping:
+    ort_cpu:
+      logits: squeezenet0_flatten0_reshape0
+    ort_cuda:
+      logits: squeezenet0_flatten0_reshape0
+    ort_trt:
+      logits: squeezenet0_flatten0_reshape0
+    openvino_cpu:
+      logits: squeezenet0_flatten0_reshape0
+    trt_fp32:
+      logits: squeezenet0_flatten0_reshape0
+    trt_fp16:
+      logits: squeezenet0_flatten0_reshape0
+
+  metrics:
+    raw:
+      - name: logits_tensor_diff
+        class: trt_profiler.metrics.TensorDiffMetric
+        config:
+          outputs:
+            - logits
+          atol: 0.000001
+          rtol: 0.000001
+          percentiles:
+            - 95
+            - 99
+    post: []
+
+  report:
+    output_dir: examples/squeezenet/reports_full
+
+preprocess:
+  class: trt_profiler.preprocessors.NpzPreprocessor
+  config:
+    inputs:
+      - name: input_tensor
+        npz_key: data
+        dtype: float32
+
+postprocessors:
+  - name: identity
+    class: trt_profiler.postprocessors.IdentityPostprocessor
+    config: {}
+

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trt-profiler"
+version = "0.1.0"
+description = "Accuracy evaluation toolkit for ONNX, OpenVINO, ONNX Runtime, and TensorRT variants."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pillow>=10.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+onnxruntime = ["onnxruntime>=1.17"]
+openvino = ["openvino>=2024.0"]
+tensorrt = ["tensorrt>=8.6", "pycuda>=2022.2"]
+dashboard = ["plotly>=5.20"]
+video = ["opencv-python-headless>=4.8"]
+dev = [
+  "mypy>=1.8",
+  "pytest>=8.0",
+  "ruff>=0.4",
+]
+
+[project.scripts]
+trt-profiler = "trt_profiler.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["trt_profiler*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = [
+  "cv2.*",
+  "onnxruntime.*",
+  "openvino.*",
+  "tensorrt.*",
+  "pycuda.*",
+  "yaml.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
