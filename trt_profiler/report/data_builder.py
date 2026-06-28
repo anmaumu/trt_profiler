@@ -1,3 +1,5 @@
+"""Report data table builder."""
+
 from __future__ import annotations
 
 from dataclasses import asdict
@@ -6,7 +8,22 @@ from trt_profiler.core.types import EvaluationResult, ReportData
 
 
 class ReportDataBuilder:
+    """Build report-ready tables from evaluation results."""
+
     def build(self, result: EvaluationResult) -> ReportData:
+        """Convert an evaluation result into report data.
+
+        Parameters
+        ----------
+        result
+            Evaluation result emitted by the pipeline.
+
+        Returns
+        -------
+        ReportData
+            Report metadata, nested summary, flat tables, and artifact metadata.
+        """
+
         return ReportData(
             metadata=result.metadata,
             summary=result.summary,

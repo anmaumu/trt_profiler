@@ -71,6 +71,13 @@ common:
 
   report:
     output_dir: examples/squeezenet/reports_image_ort_openvino
+    reporters:
+      - class: trt_profiler.report.JsonReporter
+        config:
+          path: examples/squeezenet/reports_image_ort_openvino/report.json
+      - class: trt_profiler.report.PlotlyDashboardReporter
+        config:
+          path: examples/squeezenet/reports_image_ort_openvino/dashboard.html
 
 preprocess:
   class: trt_profiler.preprocessors.ImageNetPreprocessor
@@ -86,4 +93,3 @@ postprocessors:
   - name: identity
     class: trt_profiler.postprocessors.IdentityPostprocessor
     config: {}
-

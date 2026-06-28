@@ -1,3 +1,5 @@
+"""OpenVINO artifact builder."""
+
 from __future__ import annotations
 
 from trt_profiler.core.types import ArtifactBuilder, ModelArtifact, SourceModel
@@ -11,6 +13,19 @@ class OpenVinoBuilder(ArtifactBuilder):
     """
 
     def build(self, source_model: SourceModel) -> ModelArtifact:
+        """Prepare an artifact for OpenVINO.
+
+        Parameters
+        ----------
+        source_model
+            Source ONNX model definition.
+
+        Returns
+        -------
+        ModelArtifact
+            Artifact pointing at the source model path.
+        """
+
         return ModelArtifact(
             variant_name=self.name,
             backend=self.backend,

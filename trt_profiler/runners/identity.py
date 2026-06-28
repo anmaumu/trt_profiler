@@ -1,3 +1,5 @@
+"""Identity runner used by tests and smoke comparisons."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -9,9 +11,29 @@ class IdentityRunner(ModelRunner):
     """Testing runner that returns selected inputs as outputs."""
 
     def load(self) -> None:
+        """Load the runner.
+
+        Notes
+        -----
+        This runner has no external resources to load.
+        """
+
         pass
 
     def infer(self, inputs: TensorDict) -> TensorDict:
+        """Return selected inputs as outputs.
+
+        Parameters
+        ----------
+        inputs
+            Input tensor dictionary.
+
+        Returns
+        -------
+        TensorDict
+            Output tensor dictionary after optional scale and bias.
+        """
+
         output_mapping = self.config.get("outputs")
         scale = float(self.config.get("scale", 1.0))
         bias = float(self.config.get("bias", 0.0))
@@ -25,7 +47,23 @@ class IdentityRunner(ModelRunner):
         }
 
     def get_input_specs(self) -> list[TensorSpec]:
+        """Return input metadata.
+
+        Returns
+        -------
+        list[TensorSpec]
+            Empty list because the identity runner is schema-free.
+        """
+
         return []
 
     def get_output_specs(self) -> list[TensorSpec]:
+        """Return output metadata.
+
+        Returns
+        -------
+        list[TensorSpec]
+            Empty list because the identity runner is schema-free.
+        """
+
         return []

@@ -1,3 +1,5 @@
+"""YAML configuration loading."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -5,6 +7,26 @@ from typing import Any
 
 
 def load_config(path: str | Path) -> dict[str, Any]:
+    """Load a YAML configuration file.
+
+    Parameters
+    ----------
+    path
+        YAML file path.
+
+    Returns
+    -------
+    dict[str, Any]
+        Loaded configuration mapping.
+
+    Raises
+    ------
+    RuntimeError
+        If PyYAML is not installed.
+    ValueError
+        If the loaded YAML root is not a mapping.
+    """
+
     try:
         import yaml
     except ImportError as exc:

@@ -1,3 +1,5 @@
+"""Video dataset loader using OpenCV."""
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -7,7 +9,34 @@ from trt_profiler.core.types import DatasetLoader, Sample
 
 
 class VideoLoader(DatasetLoader):
+    """Decode video frames with OpenCV.
+
+    Config Keys
+    -----------
+    path : str
+        Video file path or directory containing videos.
+    extensions : list[str], optional
+        File extensions used when ``path`` is a directory.
+    frame_stride : int, optional
+        Yield every Nth frame. Defaults to ``1``.
+    max_frames_per_video : int, optional
+        Maximum number of yielded frames per video.
+    """
+
     def __iter__(self) -> Iterator[Sample]:
+        """Yield decoded video frame samples.
+
+        Yields
+        ------
+        Sample
+            Sample whose data is a BGR frame ndarray from OpenCV.
+
+        Raises
+        ------
+        RuntimeError
+            If OpenCV is unavailable or a video cannot be opened.
+        """
+
         try:
             import cv2
         except ImportError as exc:

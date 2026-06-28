@@ -1,3 +1,5 @@
+"""ONNX Runtime inference runner."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -6,11 +8,32 @@ from trt_profiler.core.types import ModelRunner, TensorDict, TensorSpec
 
 
 class OnnxRuntimeRunner(ModelRunner):
+    """Run inference with ONNX Runtime.
+
+    Config Keys
+    -----------
+    providers : list[str], optional
+        ONNX Runtime execution provider names.
+    provider_options : dict, optional
+        Provider-specific options. A mapping keyed by provider name is converted
+        to ONNX Runtime's ordered provider options list.
+    """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._session: Any | None = None
 
     def load(self) -> None:
+        """Create the ONNX Runtime inference session.
+
+        Raises
+        ------
+        RuntimeError
+            If ONNX Runtime is not installed.
+        ValueError
+            If the artifact path is missing.
+        """
+
         try:
             import onnxruntime as ort
         except ImportError as exc:
@@ -32,6 +55,19 @@ class OnnxRuntimeRunner(ModelRunner):
         self._session = ort.InferenceSession(str(self.artifact.path), **kwargs)
 
     def infer(self, inputs: TensorDict) -> TensorDict:
+        """Run ONNX Runtime inference.
+
+        Parameters
+        ----------
+        inputs
+            Backend input tensor dictionary.
+
+        Returns
+        -------
+        TensorDict
+            Output tensors keyed by ONNX Runtime output names.
+        """
+
         if self._session is None:
             raise RuntimeError(f"Runner is not loaded: {self.name}")
 
@@ -40,6 +76,14 @@ class OnnxRuntimeRunner(ModelRunner):
         return dict(zip(output_names, values, strict=True))
 
     def get_input_specs(self) -> list[TensorSpec]:
+        """Return ONNX Runtime input metadata.
+
+        Returns
+        -------
+        list[TensorSpec]
+            Input tensor metadata, or an empty list before loading.
+        """
+
         if self._session is None:
             return []
         return [
@@ -48,6 +92,14 @@ class OnnxRuntimeRunner(ModelRunner):
         ]
 
     def get_output_specs(self) -> list[TensorSpec]:
+        """Return ONNX Runtime output metadata.
+
+        Returns
+        -------
+        list[TensorSpec]
+            Output tensor metadata, or an empty list before loading.
+        """
+
         if self._session is None:
             return []
         return [

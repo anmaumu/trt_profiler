@@ -1,3 +1,5 @@
+"""Feature map tensor comparison metric."""
+
 from __future__ import annotations
 
 from trt_profiler.metrics.tensor_diff import TensorDiffMetric

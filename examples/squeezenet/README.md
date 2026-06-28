@@ -62,6 +62,13 @@ python3 -m pip install -e ".[onnxruntime,openvino,video]"
 trt-profiler eval -c examples/squeezenet/config_video_ort_openvino.yaml
 ```
 
+Generate a dashboard from an existing JSON report:
+
+```bash
+trt-profiler dashboard examples/squeezenet/reports_ort_openvino/report.json \
+  -o examples/squeezenet/reports_ort_openvino/dashboard.html
+```
+
 ## Full backend variant config
 
 `config_full_variants.yaml` defines the intended full matrix:
@@ -73,5 +80,14 @@ trt-profiler eval -c examples/squeezenet/config_video_ort_openvino.yaml
 - native TensorRT FP32
 - native TensorRT FP16
 
-Native TensorRT engine build uses `trtexec` when available. Native TensorRT
-inference still requires the TensorRT runner implementation and CUDA bindings.
+Native TensorRT support targets TensorRT v11 only. Engine build uses `trtexec`;
+native inference uses TensorRT v11 tensor APIs and `cuda-python` for CUDA buffer
+management.
+
+Run the native TensorRT FP32 vs FP16 example:
+
+```bash
+python3 -m pip install -e ".[tensorrt,dashboard]"
+# Ensure the TensorRT SDK binary directory containing trtexec is on PATH.
+trt-profiler eval -c examples/squeezenet/config_trt_fp32_fp16.yaml
+```

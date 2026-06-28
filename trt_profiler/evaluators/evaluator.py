@@ -1,3 +1,5 @@
+"""Metric evaluation helpers."""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -7,6 +9,16 @@ from trt_profiler.core.types import Metric, MetricSummaryRecord, Sample, SampleM
 
 
 class Evaluator:
+    """Apply a set of metrics for one evaluation stage.
+
+    Parameters
+    ----------
+    stage
+        Stage name such as ``"raw"`` or ``"post"``.
+    metrics
+        Metrics evaluated for the stage.
+    """
+
     def __init__(self, stage: str, metrics: list[Metric]) -> None:
         self.stage = stage
         self.metrics = metrics
@@ -14,6 +26,14 @@ class Evaluator:
 
     @property
     def records(self) -> list[SampleMetricRecord]:
+        """Return accumulated per-sample records.
+
+        Returns
+        -------
+        list[SampleMetricRecord]
+            Records emitted by metric updates.
+        """
+
         return self._records
 
     def update(
@@ -23,6 +43,20 @@ class Evaluator:
         target: dict[str, Any],
         sample: Sample | None = None,
     ) -> None:
+        """Update all metrics with one sample comparison.
+
+        Parameters
+        ----------
+        comparison_name
+            Name of the active comparison.
+        reference
+            Reference result dictionary.
+        target
+            Target result dictionary.
+        sample
+            Optional evaluated sample.
+        """
+
         for metric in self.metrics:
             records = metric.update(reference, target, sample)
             for record in records:
@@ -41,6 +75,19 @@ class Evaluator:
                 )
 
     def compute(self, comparison_name: str) -> list[MetricSummaryRecord]:
+        """Compute summaries for all metrics.
+
+        Parameters
+        ----------
+        comparison_name
+            Name of the active comparison.
+
+        Returns
+        -------
+        list[MetricSummaryRecord]
+            Summary records with comparison and stage filled in.
+        """
+
         summaries: list[MetricSummaryRecord] = []
         for metric in self.metrics:
             for record in metric.compute():
@@ -60,6 +107,19 @@ class Evaluator:
 
 
 def nested_summary(records: list[MetricSummaryRecord]) -> dict[str, Any]:
+    """Convert flat summary records into nested report structure.
+
+    Parameters
+    ----------
+    records
+        Flat metric summary records.
+
+    Returns
+    -------
+    dict[str, Any]
+        Nested summary keyed by comparison, stage, metric, output, and stat.
+    """
+
     summary: dict[str, Any] = {"comparisons": defaultdict(lambda: defaultdict(dict))}
     comparisons = summary["comparisons"]
     for record in records:

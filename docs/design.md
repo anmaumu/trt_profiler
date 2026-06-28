@@ -1768,6 +1768,9 @@ tests/
 - 準備済み artifact をロードして推論する。
 - ONNX Runtime、OpenVINO、TensorRT native runner を実装する。
 - ORT CPU / CUDA / TensorRT EP は `OnnxRuntimeRunner` の provider config 差分として扱う。
+- native TensorRT runner は TensorRT v11 tensor API のみ対応とする。
+- native TensorRT engine build は `trtexec` を使う。
+- native TensorRT runner の CUDA buffer 管理は `cuda-python` を使い、`TensorRTRunner` 内に閉じ込める。
 
 `data/`:
 

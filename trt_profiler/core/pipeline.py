@@ -1,3 +1,5 @@
+"""Evaluation pipeline orchestration."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -29,6 +31,15 @@ from trt_profiler.report.data_builder import ReportDataBuilder
 
 
 class EvaluationPipeline:
+    """Run one configured accuracy evaluation.
+
+    Parameters
+    ----------
+    config
+        Full evaluation configuration. The expected top-level keys are
+        ``common``, ``preprocess``, and optionally ``postprocessors``.
+    """
+
     def __init__(self, config: ConfigDict) -> None:
         self.config = config
         common = config["common"]
@@ -57,6 +68,20 @@ class EvaluationPipeline:
         self.report_config = common.get("report", {})
 
     def run(self) -> EvaluationResult:
+        """Execute the evaluation pipeline.
+
+        Returns
+        -------
+        EvaluationResult
+            Evaluation metadata, summary records, and per-sample records.
+
+        Notes
+        -----
+        The method builds required artifacts, loads runners, iterates over the
+        dataset, evaluates raw and postprocessed outputs, and writes configured
+        reports.
+        """
+
         runners = self._prepare_runners()
         raw_records = []
         summary_records = []

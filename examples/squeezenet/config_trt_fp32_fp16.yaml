@@ -9,29 +9,39 @@ common:
       - classification
 
   variants:
-    - name: ort_cpu
-      backend: onnxruntime
+    - name: trt_fp32
+      backend: tensorrt
       role: reference
+      precision: fp32
       builder:
-        class: trt_profiler.builders.OnnxPassthroughBuilder
-        config: {}
-      runner:
-        class: trt_profiler.runners.OnnxRuntimeRunner
+        class: trt_profiler.builders.TensorRTBuilder
         config:
-          providers:
-            - CPUExecutionProvider
+          build: true
+          builder_backend: trtexec
+          trtexec: .local_tensorrt/usr/bin/trtexec
+          engine_path: examples/squeezenet/artifacts/model_fp32.plan
+          precision: fp32
+      runner:
+        class: trt_profiler.runners.TensorRTRunner
+        config:
+          device_id: 0
 
-    - name: openvino_cpu
-      backend: openvino
+    - name: trt_fp16
+      backend: tensorrt
       role: target
+      precision: fp16
       builder:
-        class: trt_profiler.builders.OpenVinoBuilder
+        class: trt_profiler.builders.TensorRTBuilder
         config:
-          cache_dir: examples/squeezenet/artifacts/openvino_cpu
+          build: true
+          builder_backend: trtexec
+          trtexec: .local_tensorrt/usr/bin/trtexec
+          engine_path: examples/squeezenet/artifacts/model_fp16.plan
+          precision: fp16
       runner:
-        class: trt_profiler.runners.OpenVinoRunner
+        class: trt_profiler.runners.TensorRTRunner
         config:
-          device: CPU
+          device_id: 0
 
   dataset:
     type: npz_folder
@@ -40,20 +50,20 @@ common:
       pattern: "*.npz"
 
   comparisons:
-    - name: ort_cpu_vs_openvino_cpu
-      reference: ort_cpu
-      target: openvino_cpu
+    - name: trt_fp32_vs_trt_fp16
+      reference: trt_fp32
+      target: trt_fp16
 
   input_mapping:
-    ort_cpu:
+    trt_fp32:
       data: input_tensor
-    openvino_cpu:
+    trt_fp16:
       data: input_tensor
 
   output_mapping:
-    ort_cpu:
+    trt_fp32:
       logits: squeezenet0_flatten0_reshape0
-    openvino_cpu:
+    trt_fp16:
       logits: squeezenet0_flatten0_reshape0
 
   metrics:
@@ -63,22 +73,19 @@ common:
         config:
           outputs:
             - logits
-          atol: 0.000001
-          rtol: 0.000001
           percentiles:
             - 95
             - 99
     post: []
 
   report:
-    output_dir: examples/squeezenet/reports_ort_openvino
     reporters:
       - class: trt_profiler.report.JsonReporter
         config:
-          path: examples/squeezenet/reports_ort_openvino/report.json
+          path: examples/squeezenet/reports_trt/report.json
       - class: trt_profiler.report.PlotlyDashboardReporter
         config:
-          path: examples/squeezenet/reports_ort_openvino/dashboard.html
+          path: examples/squeezenet/reports_trt/dashboard.html
 
 preprocess:
   class: trt_profiler.preprocessors.NpzPreprocessor

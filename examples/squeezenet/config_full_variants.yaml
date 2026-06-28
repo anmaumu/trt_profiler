@@ -72,6 +72,8 @@ common:
         class: trt_profiler.builders.TensorRTBuilder
         config:
           build: true
+          builder_backend: trtexec
+          trtexec: .local_tensorrt/usr/bin/trtexec
           engine_path: examples/squeezenet/artifacts/model_fp32.plan
           precision: fp32
       runner:
@@ -87,6 +89,8 @@ common:
         class: trt_profiler.builders.TensorRTBuilder
         config:
           build: true
+          builder_backend: trtexec
+          trtexec: .local_tensorrt/usr/bin/trtexec
           engine_path: examples/squeezenet/artifacts/model_fp16.plan
           precision: fp16
       runner:
@@ -177,4 +181,3 @@ postprocessors:
   - name: identity
     class: trt_profiler.postprocessors.IdentityPostprocessor
     config: {}
-

@@ -1,13 +1,44 @@
+"""Input name mapping helpers."""
+
 from __future__ import annotations
 
 from trt_profiler.core.types import TensorDict
 
 
 class InputMapper:
+    """Map common input names to backend-specific input names.
+
+    Parameters
+    ----------
+    mapping
+        Mapping keyed by runner name. Each value maps backend input names to
+        common input names.
+    """
+
     def __init__(self, mapping: dict[str, dict[str, str]] | None = None) -> None:
         self.mapping = mapping or {}
 
     def map(self, runner_name: str, inputs: TensorDict) -> TensorDict:
+        """Apply input mapping for one runner.
+
+        Parameters
+        ----------
+        runner_name
+            Runner or variant name.
+        inputs
+            Common input tensor dictionary.
+
+        Returns
+        -------
+        TensorDict
+            Backend input tensor dictionary.
+
+        Raises
+        ------
+        KeyError
+            If a configured common input is missing.
+        """
+
         runner_mapping = self.mapping.get(runner_name)
         if not runner_mapping:
             return dict(inputs)

@@ -1,3 +1,5 @@
+"""NPZ folder dataset loader."""
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -9,7 +11,27 @@ from trt_profiler.core.types import DatasetLoader, Sample
 
 
 class NpzFolderLoader(DatasetLoader):
+    """Load arrays from NPZ files in a folder.
+
+    Config Keys
+    -----------
+    path : str
+        Folder containing NPZ files.
+    pattern : str, optional
+        Glob pattern. Defaults to ``"*.npz"``.
+    limit : int, optional
+        Maximum number of NPZ files to yield.
+    """
+
     def __iter__(self) -> Iterator[Sample]:
+        """Yield NPZ samples.
+
+        Yields
+        ------
+        Sample
+            Sample whose data is a mapping of NPZ array names to arrays.
+        """
+
         root = Path(str(self.config["path"]))
         pattern = str(self.config.get("pattern", "*.npz"))
         limit = self.config.get("limit")

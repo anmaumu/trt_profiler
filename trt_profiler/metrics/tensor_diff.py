@@ -1,3 +1,5 @@
+"""Generic tensor difference metric."""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -18,6 +20,22 @@ class _OutputStats:
 
 
 class TensorDiffMetric(Metric):
+    """Compare tensors with absolute, relative, and similarity statistics.
+
+    Config Keys
+    -----------
+    outputs : list[str], optional
+        Output names to compare. Defaults to all reference outputs.
+    atol : float, optional
+        Absolute tolerance for ``allclose_rate``.
+    rtol : float, optional
+        Relative tolerance for ``allclose_rate``.
+    relative_eps : float, optional
+        Lower bound used in relative error denominator.
+    percentiles : list[float], optional
+        Absolute-error percentiles to record.
+    """
+
     def __init__(self, name: str, config: dict[str, Any] | None = None) -> None:
         super().__init__(name=name, config=config)
         self._stats: dict[str, _OutputStats] = defaultdict(_OutputStats)
@@ -28,6 +46,23 @@ class TensorDiffMetric(Metric):
         target: dict[str, Any],
         sample: Sample | None = None,
     ) -> list[SampleMetricRecord]:
+        """Update tensor difference statistics for one sample.
+
+        Parameters
+        ----------
+        reference
+            Reference output tensors.
+        target
+            Target output tensors.
+        sample
+            Optional evaluated sample.
+
+        Returns
+        -------
+        list[SampleMetricRecord]
+            Per-sample tensor difference records.
+        """
+
         outputs = [str(output) for output in self.config.get("outputs", reference.keys())]
         records: list[SampleMetricRecord] = []
         sample_id = sample.id if sample is not None else ""
@@ -108,6 +143,14 @@ class TensorDiffMetric(Metric):
         return records
 
     def compute(self) -> list[MetricSummaryRecord]:
+        """Compute aggregate tensor difference statistics.
+
+        Returns
+        -------
+        list[MetricSummaryRecord]
+            Mean statistics and max values for error-like statistics.
+        """
+
         records: list[MetricSummaryRecord] = []
         for output, stats in self._stats.items():
             for stat, values in stats.values.items():

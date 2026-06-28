@@ -1,3 +1,5 @@
+"""Built-in component registry."""
+
 from __future__ import annotations
 
 from trt_profiler.builders.onnx_passthrough import OnnxPassthroughBuilder
@@ -17,6 +19,7 @@ from trt_profiler.postprocessors.identity import IdentityPostprocessor
 from trt_profiler.preprocessors.image import ImageNetPreprocessor
 from trt_profiler.preprocessors.npz import NpzPreprocessor
 from trt_profiler.report.json_reporter import JsonReporter
+from trt_profiler.report.plotly_dashboard import PlotlyDashboardReporter
 from trt_profiler.runners.identity import IdentityRunner
 from trt_profiler.runners.onnxruntime import OnnxRuntimeRunner
 from trt_profiler.runners.openvino import OpenVinoRunner
@@ -39,6 +42,7 @@ BUILTIN_CLASSES: dict[str, type[object]] = {
     "trt_profiler.preprocessors.ImageNetPreprocessor": ImageNetPreprocessor,
     "trt_profiler.preprocessors.NpzPreprocessor": NpzPreprocessor,
     "trt_profiler.report.JsonReporter": JsonReporter,
+    "trt_profiler.report.PlotlyDashboardReporter": PlotlyDashboardReporter,
     "trt_profiler.runners.IdentityRunner": IdentityRunner,
     "trt_profiler.runners.OnnxRuntimeRunner": OnnxRuntimeRunner,
     "trt_profiler.runners.OpenVinoRunner": OpenVinoRunner,
