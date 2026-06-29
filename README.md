@@ -402,6 +402,49 @@ dashboardは単一の静的HTMLです。Dashサーバを起動しなくても、
 より複雑な絞り込み、複数report横断、画像/heatmap previewなどが必要になった場合は、同じ
 `report.json` を入力としてDashサーバ版を追加する想定です。
 
+## Dashサーバ版dashboard
+
+より複雑な確認にはDashサーバ版を使えます。複数の `report.json` を同時に読み込み、ブラウザ上で
+横断的にfilterできます。
+
+インストール:
+
+```bash
+uv pip install -e ".[dashboard]"
+```
+
+単一report:
+
+```bash
+.venv/bin/trt-profiler dash examples/squeezenet/reports_trt/report.json \
+  --host 127.0.0.1 \
+  --port 8050
+```
+
+複数report:
+
+```bash
+.venv/bin/trt-profiler dash \
+  examples/squeezenet/reports_ort_openvino/report.json \
+  examples/squeezenet/reports_trt/report.json
+```
+
+Dash版でできること:
+
+- 複数report横断
+- report / comparison / stage / metric のDropdown filter
+- comparison matrix
+- metric ranking
+- per-sample分布
+- summary / failed case DataTable
+- failed caseまたはsample row選択時の詳細表示
+- heatmap `.npy` preview
+- source image preview
+- source image + heatmap overlay
+
+画像previewには `source_path` が必要です。新しいreportでは `Sample.source_path` がper-sample rowに保存されます。
+heatmap previewには `FeatureMapDiffMetric` の `save_heatmaps: true` で出力される `heatmap_path` を使います。
+
 ## CSV出力
 
 `CsvReporter` を使うと、dashboardやJSONと同じ `ReportData` からCSVを出力できます。

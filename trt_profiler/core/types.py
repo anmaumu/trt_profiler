@@ -189,6 +189,8 @@ class SampleMetricRecord:
         Optional pass/fail threshold.
     status
         Optional status such as ``"pass"`` or ``"fail"``.
+    source_path
+        Optional original sample path used by dashboard previews.
     """
 
     sample_id: str
@@ -200,6 +202,7 @@ class SampleMetricRecord:
     output: str | None = None
     threshold: float | None = None
     status: str | None = None
+    source_path: str | None = None
 
 
 @dataclass(frozen=True)

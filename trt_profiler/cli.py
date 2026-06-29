@@ -46,6 +46,14 @@ def main() -> None:
         "-o", "--output", required=True, help="Output dashboard HTML path."
     )
 
+    dash_parser = subparsers.add_parser(
+        "dash",
+        help="Run a Dash server for one or more report JSON files.",
+    )
+    dash_parser.add_argument("report_json", nargs="+", help="Path(s) to report.json.")
+    dash_parser.add_argument("--host", default="127.0.0.1", help="Dash server host.")
+    dash_parser.add_argument("--port", default=8050, type=int, help="Dash server port.")
+
     args = parser.parse_args()
     if args.command == "eval":
         config = load_config(args.config)
@@ -54,6 +62,10 @@ def main() -> None:
     elif args.command == "dashboard":
         report_data = load_report_data(args.report_json)
         PlotlyDashboardReporter(config={"path": args.output}).write(report_data)
+    elif args.command == "dash":
+        from trt_profiler.report.dash_app import run_dash_server
+
+        run_dash_server(args.report_json, host=args.host, port=args.port)
 
 
 def _comparison_mode_from_args(args: argparse.Namespace) -> str | None:

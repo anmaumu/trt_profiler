@@ -71,6 +71,8 @@ class Evaluator:
                         output=record.output,
                         threshold=record.threshold,
                         status=record.status,
+                        source_path=record.source_path
+                        or (str(sample.source_path) if sample and sample.source_path else None),
                     )
                 )
 
