@@ -86,6 +86,9 @@ common:
       - class: trt_profiler.report.PlotlyDashboardReporter
         config:
           path: examples/squeezenet/reports_trt/dashboard.html
+      - class: trt_profiler.report.CsvReporter
+        config:
+          output_dir: examples/squeezenet/reports_trt/csv
 
 preprocess:
   class: trt_profiler.preprocessors.NpzPreprocessor

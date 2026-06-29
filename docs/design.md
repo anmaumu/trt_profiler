@@ -980,10 +980,12 @@ FeatureMapDiffMetric
 - layerごとの p99_abs_error
 - layerごとの rmse
 - layerごとの cosine_similarity
-- channelwise_cosine_similarity
+- mean_channel_cosine_similarity
+- min_channel_cosine_similarity
 - spatial_mean_abs_error
-- activation_sparsity_delta
-- feature_norm_delta
+- spatial heatmap `.npy` 保存
+- worst_sample_id
+- worst_sample_abs_error
 
 推奨判定:
 
@@ -1004,27 +1006,18 @@ ClassificationAccuracyMetric
 
 Consistency 算出候補:
 
-- top1_match_rate
-- top5_match_rate
-- topk_overlap
-- argmax_flip_count
-- confidence_delta
-- margin_delta
+- top-k match / top-k match rate
+- top-k ranking match rate
+- mean_score_abs_diff
+- max_score_abs_diff
 - KL divergence
 - JS divergence
 
 Accuracy 算出候補:
 
-- reference_top1_accuracy
-- target_top1_accuracy
-- top1_accuracy_delta
-- top1_accuracy_delta_abs
-- reference_top5_accuracy
-- target_top5_accuracy
-- top5_accuracy_delta
-- top5_accuracy_delta_abs
+- top-k accuracy
 
-`margin_delta` は top1 と top2 の score 差分を比較する。argmax が変わった場合に、そのサンプルが元々 decision boundary 付近だったかを確認するために使う。
+ClassificationConsistencyMetric は reference と target の予測分布の一致性を評価する。ClassificationAccuracyMetric は `Sample.label` または `sample.metadata[label_key]` を ground truth として target の top-k accuracy を評価する。
 
 ### 8.4 Detection Metric
 
@@ -1037,48 +1030,37 @@ DetectionConsistencyMetric
 DetectionAccuracyMetric
 ```
 
-Postprocessor は以下のような構造を返すことを推奨する。
+Postprocessor は以下のような構造を返すことを推奨する。key 名は metric config の `boxes_key` / `scores_key` / `labels_key` で変更できる。
 
 ```python
 {
-    "detections": [
-        {
-            "box": np.ndarray,  # [x1, y1, x2, y2]
-            "score": float,
-            "class_id": int,
-        }
-    ]
+    "boxes": np.ndarray,   # shape=(N, 4), xyxy
+    "scores": np.ndarray,  # shape=(N,)
+    "labels": np.ndarray,  # shape=(N,)
 }
 ```
 
 Consistency 算出候補:
 
-- matched_detection_rate
-- matched_box_count
-- missed_detection_count
-- extra_detection_count
-- mean_iou_matched_boxes
-- p95_box_l1_error
-- mean_score_delta
-- class_mismatch_count
+- reference_box_count
+- target_box_count
+- box_count_diff
+- matched_count
+- match_rate
+- mean_iou
+- class_match_rate
+- mean_confidence_abs_diff
+- unmatched_reference_count
+- unmatched_target_count
 
 Accuracy 算出候補:
 
-- reference_mAP
-- target_mAP
-- mAP_delta
-- mAP_delta_abs
-- reference_AP50
-- target_AP50
-- AP50_delta
-- reference_AP75
-- target_AP75
-- AP75_delta
-- reference_recall
-- target_recall
-- recall_delta
+- simplified mAP
+- AP@IoU threshold
+- precision@IoU threshold
+- recall@IoU threshold
 
-Detection consistency では、reference detection と target detection を IoU で対応付ける。`class_aware=true` の場合は class_id が同じ候補のみを match 対象にする。
+Detection consistency では、reference detection と target detection を IoU で greedy に対応付ける。`class_aware=true` の場合は class_id が同じ候補のみを match 対象にする。Detection accuracy は `ground_truth_source=annotations` で `Sample.annotations` を使い、`ground_truth_source=reference` で reference 出力を ground truth 扱いできる。
 
 ### 8.5 Custom Post Metric
 
@@ -1771,6 +1753,7 @@ tests/
 - native TensorRT runner は TensorRT v11 tensor API のみ対応とする。
 - native TensorRT engine build は `trtexec` を使う。
 - native TensorRT runner の CUDA buffer 管理は `cuda-python` を使い、`TensorRTRunner` 内に閉じ込める。
+- 比較ペアは `common.comparisons` の明示指定を基本とし、CLIまたは `common.comparison_mode` で `all-pairs` / `reference-to-all` を選ぶことで自動生成できる。
 
 `data/`:
 

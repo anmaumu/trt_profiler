@@ -69,6 +69,16 @@ trt-profiler dashboard examples/squeezenet/reports_ort_openvino/report.json \
   -o examples/squeezenet/reports_ort_openvino/dashboard.html
 ```
 
+## Postprocess metric example
+
+`config_postprocess.yaml` converts raw logits to probabilities with
+`SoftmaxPostprocessor`, then evaluates `ClassificationConsistencyMetric` in the
+postprocess stage.
+
+```bash
+trt-profiler eval -c examples/squeezenet/config_postprocess.yaml
+```
+
 ## Full backend variant config
 
 `config_full_variants.yaml` defines the intended full matrix:

@@ -25,6 +25,17 @@ def main() -> None:
 
     eval_parser = subparsers.add_parser("eval", help="Run an accuracy evaluation.")
     eval_parser.add_argument("-c", "--config", required=True, help="Path to YAML config.")
+    comparison_group = eval_parser.add_mutually_exclusive_group()
+    comparison_group.add_argument(
+        "--all-combinations",
+        action="store_true",
+        help="Evaluate all pairwise variant combinations defined in the config.",
+    )
+    comparison_group.add_argument(
+        "--reference-to-all",
+        action="store_true",
+        help="Evaluate each reference variant against all other variants.",
+    )
 
     dashboard_parser = subparsers.add_parser(
         "dashboard",
@@ -38,7 +49,29 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "eval":
         config = load_config(args.config)
-        EvaluationPipeline(config).run()
+        comparison_mode = _comparison_mode_from_args(args)
+        EvaluationPipeline(config, comparison_mode=comparison_mode).run()
     elif args.command == "dashboard":
         report_data = load_report_data(args.report_json)
         PlotlyDashboardReporter(config={"path": args.output}).write(report_data)
+
+
+def _comparison_mode_from_args(args: argparse.Namespace) -> str | None:
+    """Resolve comparison mode from CLI arguments.
+
+    Parameters
+    ----------
+    args
+        Parsed CLI arguments.
+
+    Returns
+    -------
+    str | None
+        Pipeline comparison mode override, or ``None`` to use the config.
+    """
+
+    if getattr(args, "all_combinations", False):
+        return "all-pairs"
+    if getattr(args, "reference_to_all", False):
+        return "reference-to-all"
+    return None

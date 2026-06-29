@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -38,9 +39,12 @@ class EvaluationPipeline:
     config
         Full evaluation configuration. The expected top-level keys are
         ``common``, ``preprocess``, and optionally ``postprocessors``.
+    comparison_mode
+        Optional comparison generation override. Supported values are
+        ``"configured"``, ``"all-pairs"``, and ``"reference-to-all"``.
     """
 
-    def __init__(self, config: ConfigDict) -> None:
+    def __init__(self, config: ConfigDict, comparison_mode: str | None = None) -> None:
         self.config = config
         common = config["common"]
         model = common["model"]
@@ -49,14 +53,11 @@ class EvaluationPipeline:
             format=str(model["format"]),
         )
         self.variants = parse_variants(common["variants"])
-        self.comparisons = [
-            Comparison(
-                name=str(item["name"]),
-                reference=str(item["reference"]),
-                target=str(item["target"]),
-            )
-            for item in common["comparisons"]
-        ]
+        self.comparisons = build_comparisons(
+            self.variants,
+            list(common.get("comparisons", [])),
+            str(comparison_mode or common.get("comparison_mode", "configured")),
+        )
         self.dataset = build_dataset(common["dataset"])
         self.preprocessor = build_preprocessor(config["preprocess"])
         self.postprocessors = build_postprocessors(config.get("postprocessors", []))
@@ -192,3 +193,76 @@ class EvaluationPipeline:
             ]
         for reporter in reporters:
             reporter.write(report_data)
+
+
+def build_comparisons(
+    variants: Sequence[BackendVariant],
+    configured_comparisons: Sequence[ConfigDict],
+    mode: str = "configured",
+) -> list[Comparison]:
+    """Build comparison pairs from configuration and comparison mode.
+
+    Parameters
+    ----------
+    variants
+        Backend variants available in the evaluation.
+    configured_comparisons
+        Explicit comparison definitions from config.
+    mode
+        Comparison generation mode. Supported values are ``"configured"``,
+        ``"all-pairs"``, and ``"reference-to-all"``.
+
+    Returns
+    -------
+    list[Comparison]
+        Comparison definitions used by the pipeline.
+
+    Raises
+    ------
+    ValueError
+        If the mode is unknown or no reference variant is available for
+        ``"reference-to-all"``.
+    """
+
+    if mode == "configured":
+        return [
+            Comparison(
+                name=str(item["name"]),
+                reference=str(item["reference"]),
+                target=str(item["target"]),
+            )
+            for item in configured_comparisons
+        ]
+
+    if mode == "all-pairs":
+        comparisons: list[Comparison] = []
+        for ref_index, reference in enumerate(variants):
+            for target in variants[ref_index + 1 :]:
+                comparisons.append(
+                    Comparison(
+                        name=f"{reference.name}_vs_{target.name}",
+                        reference=reference.name,
+                        target=target.name,
+                    )
+                )
+        return comparisons
+
+    if mode == "reference-to-all":
+        references = [variant for variant in variants if variant.role == "reference"]
+        if not references:
+            raise ValueError("comparison_mode='reference-to-all' requires a reference variant.")
+        comparisons = []
+        for reference in references:
+            for target in variants:
+                if target.name == reference.name:
+                    continue
+                comparisons.append(
+                    Comparison(
+                        name=f"{reference.name}_vs_{target.name}",
+                        reference=reference.name,
+                        target=target.name,
+                    )
+                )
+        return comparisons
+
+    raise ValueError(f"Unknown comparison mode: {mode!r}")

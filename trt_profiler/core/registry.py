@@ -15,9 +15,11 @@ from trt_profiler.metrics.classification import (
 from trt_profiler.metrics.detection import DetectionAccuracyMetric, DetectionConsistencyMetric
 from trt_profiler.metrics.feature_map_diff import FeatureMapDiffMetric
 from trt_profiler.metrics.tensor_diff import TensorDiffMetric
+from trt_profiler.postprocessors.classification import SoftmaxPostprocessor
 from trt_profiler.postprocessors.identity import IdentityPostprocessor
 from trt_profiler.preprocessors.image import ImageNetPreprocessor
 from trt_profiler.preprocessors.npz import NpzPreprocessor
+from trt_profiler.report.csv_reporter import CsvReporter
 from trt_profiler.report.json_reporter import JsonReporter
 from trt_profiler.report.plotly_dashboard import PlotlyDashboardReporter
 from trt_profiler.runners.identity import IdentityRunner
@@ -39,8 +41,10 @@ BUILTIN_CLASSES: dict[str, type[object]] = {
     "trt_profiler.metrics.DetectionConsistencyMetric": DetectionConsistencyMetric,
     "trt_profiler.metrics.DetectionAccuracyMetric": DetectionAccuracyMetric,
     "trt_profiler.postprocessors.IdentityPostprocessor": IdentityPostprocessor,
+    "trt_profiler.postprocessors.SoftmaxPostprocessor": SoftmaxPostprocessor,
     "trt_profiler.preprocessors.ImageNetPreprocessor": ImageNetPreprocessor,
     "trt_profiler.preprocessors.NpzPreprocessor": NpzPreprocessor,
+    "trt_profiler.report.CsvReporter": CsvReporter,
     "trt_profiler.report.JsonReporter": JsonReporter,
     "trt_profiler.report.PlotlyDashboardReporter": PlotlyDashboardReporter,
     "trt_profiler.runners.IdentityRunner": IdentityRunner,
