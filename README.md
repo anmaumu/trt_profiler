@@ -45,7 +45,13 @@ trt_profiler/
   metrics/         raw / postprocess metric
   report/          JSON / Plotly dashboard reporter
 docs/
-  design.md        設計仕様とclass構成
+  README.md        ドキュメント目次
+  application_spec.md
+                   アプリケーション仕様
+  uml.md           UML図
+  tutorial_user_model.md
+                   ユーザーモデル評価チュートリアル
+  design.md        初期設計から詳細方針まで含む設計仕様
 examples/
   squeezenet/      公開ONNXモデルを使う実行サンプル
 tests/
@@ -433,6 +439,7 @@ Dash版でできること:
 
 - 複数report横断
 - report / comparison / stage / metric のDropdown filter
+- `?` ボタンによるmetric help modal
 - comparison matrix
 - metric ranking
 - per-sample分布
@@ -441,6 +448,13 @@ Dash版でできること:
 - heatmap `.npy` preview
 - source image preview
 - source image + heatmap overlay
+
+metric help modalでは、選択中metricについて次を確認できます。
+
+- metricの目的
+- 主なstatの意味
+- 値の見方の目安
+- raw metric / post metricを見るときの注意点
 
 画像previewには `source_path` が必要です。新しいreportでは `Sample.source_path` がper-sample rowに保存されます。
 heatmap previewには `FeatureMapDiffMetric` の `save_heatmaps: true` で出力される `heatmap_path` を使います。
@@ -503,6 +517,118 @@ configは大きく次の構成です。
 
 前処理/後処理classはそれぞれ自分のconfigを解釈します。pipeline側は基底classの契約だけに依存するため、
 モデル固有の処理を低依存で差し替えられます。
+
+## 簡易config
+
+`common` セクションを持つconfigは詳細configとしてそのまま使われます。
+`common` がないconfigは簡易configとして読み込まれ、内部で詳細configへ展開されます。
+
+```text
+YAML
+  -> trt_profiler.config.parser で EvaluationConfig にparse
+  -> trt_profiler.config.validation で必須項目を検証
+  -> trt_profiler.config.presets でvariant/metric/component presetを解決
+  -> trt_profiler.config.builder で既存pipeline用の詳細configへ変換
+```
+
+`trt_profiler.config.loader.load_config()` がこの流れをまとめています。
+既存互換のため `trt_profiler.config.simple.normalize_config()` も残していますが、新規実装では
+`loader.py`、`schema.py`、`parser.py`、`presets.py`、`builder.py` の責務を分けて追える構成です。
+
+最小例:
+
+```yaml
+model:
+  name: squeezenet1_1
+  path: examples/squeezenet/assets/model.onnx
+
+input:
+  type: npz
+  path: examples/squeezenet/inputs
+  input_name: input_tensor
+  backend_name: data
+  npz_key: data
+
+outputs:
+  logits: squeezenet0_flatten0_reshape0
+
+variants:
+  - ort_cpu
+  - openvino_cpu
+
+compare: reference-to-all
+
+metrics:
+  raw:
+    - tensor_diff:
+        outputs: [logits]
+
+report:
+  output_dir: reports/simple
+  formats: [json, dashboard, csv]
+```
+
+対応しているvariant preset:
+
+- `ort_cpu`
+- `ort_cuda`
+- `ort_trt`
+- `openvino_cpu`
+- `trt_fp32`
+- `trt_fp16`
+
+metric preset:
+
+- `tensor_diff`
+- `feature_diff`
+- `classification_consistency`
+- `classification_accuracy`
+- `detection_consistency`
+- `detection_accuracy`
+
+標準preprocessを使う場合:
+
+```yaml
+preprocess:
+  type: imagenet
+  input_name: images
+  size: [224, 224]
+```
+
+独自preprocessを使う場合:
+
+```yaml
+preprocess:
+  class: my_project.preprocess.MyPreprocessor
+  config:
+    input_name: images
+    resize: [640, 640]
+    letterbox: true
+```
+
+`class` を指定した場合はpreset展開せず、そのまま詳細configへ渡します。`config` の中身は独自class側で解釈してください。
+
+postprocessも同じ考え方です。
+
+```yaml
+postprocess:
+  type: softmax
+  logits_key: logits
+  probs_key: probs
+```
+
+または独自class:
+
+```yaml
+postprocess:
+  class: my_project.postprocess.MyPostprocessor
+  config:
+    score_threshold: 0.25
+    nms_iou: 0.45
+```
+
+SqueezeNetサンプルの `config*.yaml` は簡易config形式で整理しています。
+一覧は [examples/squeezenet/README.md](examples/squeezenet/README.md) を参照してください。
 
 ## デフォルトの前処理/後処理
 

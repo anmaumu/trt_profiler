@@ -7,13 +7,13 @@ model:
     - classification
 
 input:
-  type: image
-  path: examples/squeezenet/images
-  input_name: input
+  type: npz
+  path: examples/squeezenet/inputs
+  pattern: "*.npz"
+  input_name: input_tensor
   backend_name: data
-  extensions:
-    - .png
-    - .jpg
+  npz_key: data
+  dtype: float32
 
 outputs:
   logits: squeezenet0_flatten0_reshape0
@@ -24,15 +24,6 @@ variants:
 
 compare: reference-to-all
 
-preprocess:
-  type: imagenet
-  input_name: input
-  size:
-    - 224
-    - 224
-  layout: NCHW
-  dtype: float32
-
 metrics:
   raw:
     - tensor_diff:
@@ -41,9 +32,23 @@ metrics:
         percentiles:
           - 95
           - 99
+  post:
+    - classification_consistency:
+        probs_key: probs
+        topk:
+          - 1
+          - 5
+
+postprocess:
+  type: softmax
+  logits_key: logits
+  probs_key: probs
+  axis: -1
+  squeeze: true
 
 report:
-  output_dir: examples/squeezenet/reports_image_ort_openvino
+  output_dir: examples/squeezenet/reports_simple
   formats:
     - json
     - dashboard
+    - csv

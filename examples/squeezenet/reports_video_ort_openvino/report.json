@@ -20,7 +20,7 @@
     "comparisons": {
       "ort_cpu_vs_openvino_cpu": {
         "raw": {
-          "logits_tensor_diff": {
+          "tensor_diff": {
             "logits": {
               "shape_match_rate": 1.0,
               "max_abs_error": 4.2120615641276044e-06,
@@ -54,7 +54,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "shape_match_rate",
         "value": 1.0
@@ -62,7 +62,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "max_abs_error",
         "value": 4.2120615641276044e-06
@@ -70,7 +70,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "max_abs_error_max",
         "value": 5.245208740234375e-06
@@ -78,7 +78,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "mean_abs_error",
         "value": 7.914341792153815e-07
@@ -86,7 +86,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "mean_abs_error_max",
         "value": 8.349278941750526e-07
@@ -94,7 +94,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "rmse",
         "value": 1.0523709302475366e-06
@@ -102,7 +102,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "rmse_max",
         "value": 1.1160786744786356e-06
@@ -110,7 +110,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "max_rel_error",
         "value": 1.8720477765979e-05
@@ -118,7 +118,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "max_rel_error_max",
         "value": 1.9781950811652203e-05
@@ -126,7 +126,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "mean_rel_error",
         "value": 5.038611279636126e-07
@@ -134,7 +134,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "mean_rel_error_max",
         "value": 5.388923288382017e-07
@@ -142,7 +142,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "cosine_similarity",
         "value": 0.9999999999999402
@@ -150,7 +150,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "allclose_rate",
         "value": 1.0
@@ -158,7 +158,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "nan_count",
         "value": 0.0
@@ -166,7 +166,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "nan_count_max",
         "value": 0.0
@@ -174,7 +174,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "inf_count",
         "value": 0.0
@@ -182,7 +182,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "inf_count_max",
         "value": 0.0
@@ -190,7 +190,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "p95_abs_error",
         "value": 2.1457672119140625e-06
@@ -198,7 +198,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "p95_abs_error_max",
         "value": 2.384185791015625e-06
@@ -206,7 +206,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "p99_abs_error",
         "value": 3.020763397216796e-06
@@ -214,7 +214,7 @@
       {
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "output": "logits",
         "stat": "p99_abs_error_max",
         "value": 3.337860107421875e-06
@@ -225,397 +225,433 @@
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "shape_match",
         "value": true,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_abs_error",
         "value": 5.245208740234375e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_abs_error",
         "value": 8.155307732522487e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "rmse",
         "value": 1.1160786744786356e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_rel_error",
         "value": 1.7256194973995664e-05,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_rel_error",
         "value": 5.160951848481479e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "cosine_similarity",
         "value": 0.9999999999999418,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "allclose_rate",
         "value": 1.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "nan_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "inf_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p95_abs_error",
         "value": 2.384185791015625e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:0",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p99_abs_error",
         "value": 3.337860107421875e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "shape_match",
         "value": true,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_abs_error",
         "value": 4.291534423828125e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_abs_error",
         "value": 8.349278941750526e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "rmse",
         "value": 1.0904204100768127e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_rel_error",
         "value": 1.912328751228913e-05,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_rel_error",
         "value": 5.388923288382017e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "cosine_similarity",
         "value": 0.9999999999999354,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "allclose_rate",
         "value": 1.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "nan_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "inf_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p95_abs_error",
         "value": 2.1457672119140625e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:5",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p99_abs_error",
         "value": 2.8634071350097635e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "shape_match",
         "value": true,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_abs_error",
         "value": 3.0994415283203125e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_abs_error",
         "value": 7.238438702188432e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "rmse",
         "value": 9.506137061871614e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "max_rel_error",
         "value": 1.9781950811652203e-05,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "mean_rel_error",
         "value": 4.565958702044882e-07,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "cosine_similarity",
         "value": 0.9999999999999434,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "allclose_rate",
         "value": 1.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "nan_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "inf_count",
         "value": 0.0,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p95_abs_error",
         "value": 1.9073486328125e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       },
       {
         "sample_id": "sample:10",
         "comparison": "ort_cpu_vs_openvino_cpu",
         "stage": "raw",
-        "metric": "logits_tensor_diff",
+        "metric": "tensor_diff",
         "stat": "p99_abs_error",
         "value": 2.86102294921875e-06,
         "output": "logits",
         "threshold": null,
-        "status": null
+        "status": null,
+        "source_path": "examples/squeezenet/videos/sample.mp4"
       }
     ],
     "per_output": [],

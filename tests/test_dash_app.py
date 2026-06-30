@@ -12,6 +12,7 @@ from trt_profiler.report.dash_app import (
     build_overlay_figure,
     build_ranking_figure,
     load_dashboard_rows,
+    metric_help_for,
 )
 
 
@@ -47,6 +48,13 @@ def test_heatmap_and_overlay_preview_figures(tmp_path: Path) -> None:
 
     assert heatmap.data
     assert len(overlay.data) == 2
+
+
+def test_metric_help_resolves_registered_metric() -> None:
+    help_data = metric_help_for("classification_consistency")
+
+    assert help_data["title"] == "Classification Metrics"
+    assert "top1_match_rate" in help_data["stats"]
 
 
 def _write_report(path: Path, comparison: str, value: float) -> Path:

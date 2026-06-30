@@ -1,96 +1,43 @@
 version: 1
 
-common:
-  model:
-    name: squeezenet1_1
-    source_path: examples/squeezenet/assets/model.onnx
-    format: onnx
-    tasks:
-      - classification
+model:
+  name: squeezenet1_1
+  path: examples/squeezenet/assets/model.onnx
+  tasks:
+    - classification
 
-  variants:
-    - name: ort_cpu
-      backend: onnxruntime
-      role: reference
-      builder:
-        class: trt_profiler.builders.OnnxPassthroughBuilder
-        config: {}
-      runner:
-        class: trt_profiler.runners.OnnxRuntimeRunner
-        config:
-          providers:
-            - CPUExecutionProvider
+input:
+  type: npz
+  path: examples/squeezenet/inputs
+  pattern: "*.npz"
+  input_name: input_tensor
+  backend_name: data
+  npz_key: data
+  dtype: float32
 
-    - name: trt_fp32
-      backend: tensorrt
-      role: target
-      precision: fp32
-      builder:
-        class: trt_profiler.builders.TensorRTBuilder
-        config:
-          build: true
-          builder_backend: trtexec
-          trtexec: .local_tensorrt/usr/bin/trtexec
-          engine_path: examples/squeezenet/artifacts/model_fp32.plan
-          precision: fp32
-      runner:
-        class: trt_profiler.runners.TensorRTRunner
-        config:
-          device_id: 0
+outputs:
+  logits: squeezenet0_flatten0_reshape0
 
-  dataset:
-    type: npz_folder
-    config:
-      path: examples/squeezenet/inputs
-      pattern: "*.npz"
+variants:
+  - ort_cpu
+  - trt_fp32
 
-  comparisons:
-    - name: ort_cpu_vs_trt_fp32
-      reference: ort_cpu
-      target: trt_fp32
+compare: reference-to-all
 
-  input_mapping:
-    ort_cpu:
-      data: input_tensor
-    trt_fp32:
-      data: input_tensor
+tensor_rt:
+  artifacts_dir: examples/squeezenet/artifacts
 
-  output_mapping:
-    ort_cpu:
-      logits: squeezenet0_flatten0_reshape0
-    trt_fp32:
-      logits: squeezenet0_flatten0_reshape0
+metrics:
+  raw:
+    - tensor_diff:
+        outputs:
+          - logits
+        percentiles:
+          - 95
+          - 99
 
-  metrics:
-    raw:
-      - name: logits_tensor_diff
-        class: trt_profiler.metrics.TensorDiffMetric
-        config:
-          outputs:
-            - logits
-          percentiles:
-            - 95
-            - 99
-    post: []
-
-  report:
-    reporters:
-      - class: trt_profiler.report.JsonReporter
-        config:
-          path: examples/squeezenet/reports_trt_fp32/report.json
-      - class: trt_profiler.report.PlotlyDashboardReporter
-        config:
-          path: examples/squeezenet/reports_trt_fp32/dashboard.html
-
-preprocess:
-  class: trt_profiler.preprocessors.NpzPreprocessor
-  config:
-    inputs:
-      - name: input_tensor
-        npz_key: data
-        dtype: float32
-
-postprocessors:
-  - name: identity
-    class: trt_profiler.postprocessors.IdentityPostprocessor
-    config: {}
+report:
+  output_dir: examples/squeezenet/reports_trt_fp32
+  formats:
+    - json
+    - dashboard

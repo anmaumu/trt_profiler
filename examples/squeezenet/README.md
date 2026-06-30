@@ -1,17 +1,16 @@
-# SqueezeNet ONNX Example
+# SqueezeNet ONNX サンプル
 
-This example downloads a small public ONNX model and creates a synthetic NPZ
-input for a real ONNX Runtime smoke evaluation.
+このサンプルは、ONNX Model Zoo の SqueezeNet 1.1 を使って `trt_profiler` の実行方法を確認するためのものです。
 
-The model is SqueezeNet 1.1 from the ONNX Model Zoo.
+すべての `config*.yaml` は簡易 config 形式で書かれています。`load_config()` が内部で詳細 config に展開してから評価を実行します。
 
-## Prepare assets
+## Asset 作成
 
 ```bash
 python3 examples/squeezenet/prepare_assets.py
 ```
 
-This creates:
+作成される主なファイル:
 
 ```text
 examples/squeezenet/assets/model.onnx
@@ -20,21 +19,28 @@ examples/squeezenet/images/sample_0001.png
 examples/squeezenet/videos/sample.mp4
 ```
 
-## Run
+## Config 一覧
 
-Install the runtime dependency first:
+| config | 内容 |
+| --- | --- |
+| `config.yaml` | ORT CPU vs ORT CPU の最小 smoke test |
+| `config_simple.yaml` | ORT CPU vs OpenVINO CPU、softmax postprocess、CSV/dashboard 出力 |
+| `config_postprocess.yaml` | ORT CPU vs ORT CPU、classification post metric |
+| `config_ort_openvino.yaml` | NPZ 入力で ORT CPU vs OpenVINO CPU |
+| `config_image_ort_openvino.yaml` | 画像入力で ORT CPU vs OpenVINO CPU |
+| `config_video_ort_openvino.yaml` | 動画入力で ORT CPU vs OpenVINO CPU |
+| `config_ort_trt_fp32.yaml` | ORT CPU vs native TensorRT FP32 |
+| `config_trt_fp32_fp16.yaml` | native TensorRT FP32 vs FP16 |
+| `config_full_variants.yaml` | ORT / OpenVINO / TensorRT の比較 matrix 例 |
+
+## 最小実行
 
 ```bash
 python3 -m pip install -e ".[onnxruntime]"
-```
-
-Then run:
-
-```bash
 trt-profiler eval -c examples/squeezenet/config.yaml
 ```
 
-The report is written to:
+出力:
 
 ```text
 examples/squeezenet/reports/report.json
@@ -42,62 +48,61 @@ examples/squeezenet/reports/report.json
 
 ## ORT vs OpenVINO
 
-Install OpenVINO and run:
-
 ```bash
-python3 -m pip install -e ".[onnxruntime,openvino]"
+python3 -m pip install -e ".[onnxruntime,openvino,dashboard]"
 trt-profiler eval -c examples/squeezenet/config_ort_openvino.yaml
 ```
 
-Image-folder input is also available:
+画像入力:
 
 ```bash
 trt-profiler eval -c examples/squeezenet/config_image_ort_openvino.yaml
 ```
 
-Video input via `cv2.VideoCapture` is available with the `video` extra:
+動画入力:
 
 ```bash
-python3 -m pip install -e ".[onnxruntime,openvino,video]"
+python3 -m pip install -e ".[onnxruntime,openvino,video,dashboard]"
 trt-profiler eval -c examples/squeezenet/config_video_ort_openvino.yaml
 ```
 
-Generate a dashboard from an existing JSON report:
+## Postprocess metric
+
+`config_postprocess.yaml` は raw logits を `SoftmaxPostprocessor` で確率に変換し、post stage で `ClassificationConsistencyMetric` を評価します。
+
+```bash
+trt-profiler eval -c examples/squeezenet/config_postprocess.yaml
+```
+
+## TensorRT
+
+native TensorRT runner は TensorRT v11 を対象にしています。engine build は `trtexec`、推論は TensorRT v11 tensor API と `cuda-python` を使います。
+
+```bash
+python3 -m pip install -e ".[tensorrt,dashboard]"
+# trtexec が PATH 上にあることを確認してください。
+trt-profiler eval -c examples/squeezenet/config_trt_fp32_fp16.yaml
+```
+
+`trtexec` が PATH 上にない場合は config に追加します。
+
+```yaml
+tensor_rt:
+  artifacts_dir: examples/squeezenet/artifacts
+  trtexec: /path/to/trtexec
+```
+
+## Dashboard
+
+既存の `report.json` から静的 HTML を作る場合:
 
 ```bash
 trt-profiler dashboard examples/squeezenet/reports_ort_openvino/report.json \
   -o examples/squeezenet/reports_ort_openvino/dashboard.html
 ```
 
-## Postprocess metric example
-
-`config_postprocess.yaml` converts raw logits to probabilities with
-`SoftmaxPostprocessor`, then evaluates `ClassificationConsistencyMetric` in the
-postprocess stage.
+Dash server で見る場合:
 
 ```bash
-trt-profiler eval -c examples/squeezenet/config_postprocess.yaml
-```
-
-## Full backend variant config
-
-`config_full_variants.yaml` defines the intended full matrix:
-
-- ORT CPU
-- ORT CUDA
-- ORT TensorRT EP
-- OpenVINO CPU
-- native TensorRT FP32
-- native TensorRT FP16
-
-Native TensorRT support targets TensorRT v11 only. Engine build uses `trtexec`;
-native inference uses TensorRT v11 tensor APIs and `cuda-python` for CUDA buffer
-management.
-
-Run the native TensorRT FP32 vs FP16 example:
-
-```bash
-python3 -m pip install -e ".[tensorrt,dashboard]"
-# Ensure the TensorRT SDK binary directory containing trtexec is on PATH.
-trt-profiler eval -c examples/squeezenet/config_trt_fp32_fp16.yaml
+trt-profiler dash examples/squeezenet/reports_ort_openvino/report.json
 ```

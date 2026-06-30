@@ -5,6 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from trt_profiler.config.builder import build_pipeline_config
+from trt_profiler.config.parser import parse_evaluation_config
+from trt_profiler.config.validation import validate_evaluation_config
+
 
 def load_config(path: str | Path) -> dict[str, Any]:
     """Load a YAML configuration file.
@@ -37,4 +41,9 @@ def load_config(path: str | Path) -> dict[str, Any]:
         loaded = yaml.safe_load(file)
     if not isinstance(loaded, dict):
         raise ValueError(f"Config must be a mapping: {config_path}")
-    return loaded
+    if "common" in loaded:
+        return loaded
+
+    config = parse_evaluation_config(loaded)
+    validate_evaluation_config(config)
+    return build_pipeline_config(config)

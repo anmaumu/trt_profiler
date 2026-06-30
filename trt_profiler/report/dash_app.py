@@ -30,7 +30,7 @@ def run_dash_server(report_paths: list[str | Path], host: str, port: int) -> Non
     """
 
     try:
-        from dash import Dash, Input, Output, State, dash_table, dcc, html
+        from dash import Dash, Input, Output, State, ctx, dash_table, dcc, html
     except ImportError as exc:
         raise RuntimeError("dash is required. Install trt-profiler[dashboard].") from exc
 
@@ -55,8 +55,35 @@ def run_dash_server(report_paths: list[str | Path], host: str, port: int) -> Non
                             _dropdown(dcc, "comparison-filter", "比較ペア"),
                             _dropdown(dcc, "stage-filter", "Stage"),
                             _dropdown(dcc, "metric-filter", "Metric"),
+                            html.Button(
+                                "?", id="metric-help-open", n_clicks=0, style=_help_button_style()
+                            ),
                         ],
                         style=_controls_style(),
+                    ),
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Div(
+                                        [
+                                            html.H2("Metric Help", style={"margin": "0"}),
+                                            html.Button(
+                                                "Close",
+                                                id="metric-help-close",
+                                                n_clicks=0,
+                                                style=_close_button_style(),
+                                            ),
+                                        ],
+                                        style=_modal_header_style(),
+                                    ),
+                                    html.Div(id="metric-help-body"),
+                                ],
+                                style=_modal_content_style(),
+                            )
+                        ],
+                        id="metric-help-modal",
+                        style=_modal_overlay_style(hidden=True),
                     ),
                     html.Div(
                         [
@@ -277,6 +304,32 @@ def run_dash_server(report_paths: list[str | Path], host: str, port: int) -> Non
             build_overlay_figure(source_path, heatmap_path),
         )
 
+    @app.callback(
+        Output("metric-help-modal", "style"),
+        Output("metric-help-body", "children"),
+        Input("metric-help-open", "n_clicks"),
+        Input("metric-help-close", "n_clicks"),
+        Input("metric-filter", "value"),
+        State("metric-help-modal", "style"),
+    )
+    def update_metric_help(
+        open_clicks: int | None,
+        close_clicks: int | None,
+        metric_value: str | None,
+        current_style: dict[str, Any] | None,
+    ) -> tuple[dict[str, Any], Any]:
+        del open_clicks, close_clicks
+        help_data = metric_help_for(metric_value or "")
+        body = _metric_help_component(html, help_data)
+        triggered = ctx.triggered_id
+        if triggered == "metric-help-close":
+            return _modal_overlay_style(hidden=True), body
+        if triggered == "metric-help-open":
+            return _modal_overlay_style(hidden=False), body
+        if current_style and current_style.get("display") == "flex":
+            return _modal_overlay_style(hidden=False), body
+        return _modal_overlay_style(hidden=True), body
+
     app.run(host=host, port=port, debug=False)
 
 
@@ -480,9 +533,69 @@ def _header_style() -> dict[str, str]:
 def _controls_style() -> dict[str, str]:
     return {
         "display": "grid",
-        "gridTemplateColumns": "repeat(4, minmax(180px, 1fr))",
+        "gridTemplateColumns": "repeat(4, minmax(180px, 1fr)) 44px",
         "gap": "12px",
         "marginBottom": "16px",
+        "alignItems": "end",
+    }
+
+
+def _help_button_style() -> dict[str, str]:
+    return {
+        "height": "38px",
+        "border": "1px solid #2563eb",
+        "borderRadius": "999px",
+        "backgroundColor": "#2563eb",
+        "color": "white",
+        "fontWeight": "700",
+        "fontSize": "18px",
+        "cursor": "pointer",
+    }
+
+
+def _close_button_style() -> dict[str, str]:
+    return {
+        "border": "1px solid #c6ceda",
+        "borderRadius": "6px",
+        "backgroundColor": "white",
+        "padding": "8px 12px",
+        "cursor": "pointer",
+    }
+
+
+def _modal_overlay_style(hidden: bool) -> dict[str, Any]:
+    return {
+        "display": "none" if hidden else "flex",
+        "position": "fixed",
+        "inset": "0",
+        "zIndex": 1000,
+        "backgroundColor": "rgba(15, 23, 42, 0.45)",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "padding": "24px",
+    }
+
+
+def _modal_content_style() -> dict[str, str]:
+    return {
+        "backgroundColor": "white",
+        "borderRadius": "8px",
+        "border": "1px solid #d8dee9",
+        "boxShadow": "0 24px 60px rgba(15, 23, 42, 0.25)",
+        "width": "min(920px, 96vw)",
+        "maxHeight": "86vh",
+        "overflowY": "auto",
+        "padding": "20px",
+    }
+
+
+def _modal_header_style() -> dict[str, str]:
+    return {
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "space-between",
+        "gap": "12px",
+        "marginBottom": "14px",
     }
 
 
@@ -512,6 +625,155 @@ def _detail_style() -> dict[str, str]:
         "overflow": "auto",
         "minHeight": "280px",
         "whiteSpace": "pre-wrap",
+    }
+
+
+def metric_help_for(metric_name: str) -> dict[str, Any]:
+    """Return help content for a metric name.
+
+    Parameters
+    ----------
+    metric_name
+        Metric instance name or class-like name.
+
+    Returns
+    -------
+    dict[str, Any]
+        Help content used by the Dash modal.
+    """
+
+    normalized = metric_name.lower()
+    for key, value in _metric_help_catalog().items():
+        if key.lower() in normalized:
+            return value
+    return _metric_help_catalog()["default"]
+
+
+def _metric_help_component(html: Any, help_data: dict[str, Any]) -> Any:
+    stats = help_data.get("stats", {})
+    thresholds = help_data.get("thresholds", [])
+    notes = help_data.get("notes", [])
+    return html.Div(
+        [
+            html.H3(str(help_data["title"]), style={"marginTop": "0"}),
+            html.P(str(help_data["purpose"])),
+            html.H4("主なstat"),
+            html.Ul(
+                [
+                    html.Li([html.Code(stat), ": ", description])
+                    for stat, description in stats.items()
+                ]
+            ),
+            html.H4("見方の目安"),
+            html.Ul([html.Li(item) for item in thresholds]),
+            html.H4("注意点"),
+            html.Ul([html.Li(item) for item in notes]),
+        ],
+        style={"lineHeight": "1.6"},
+    )
+
+
+def _metric_help_catalog() -> dict[str, dict[str, Any]]:
+    return {
+        "tensor": {
+            "title": "TensorDiffMetric",
+            "purpose": "raw tensor同士の数値差分を確認するmetricです。",
+            "stats": {
+                "shape_match_rate": "shape一致率。1.0であることが前提です。",
+                "cosine_similarity": "ベクトル方向の一致度。1.0に近いほど良いです。",
+                "mean_abs_error": "全要素の平均絶対誤差。全体的なズレ量を見ます。",
+                "max_abs_error": "最大絶対誤差。一部だけ大きくズレていないかを見ます。",
+                "rmse": "二乗平均平方根誤差。大きなズレをやや強く反映します。",
+                "allclose_rate": "atol/rtol条件で一致した要素の割合です。",
+            },
+            "thresholds": [
+                "logits: cosine_similarity >= 0.9999 をまず目安にします。",
+                "mean_abs_error / max_abs_error は出力スケールに依存します。",
+                "FP16では完全一致ではなく、タスク出力が保たれているかを重視します。",
+            ],
+            "notes": [
+                "raw metricは数値差分を見るもので、最終判断はpost metricを優先します。",
+                "shapeが一致しない場合は変換やmappingの問題を先に確認してください。",
+            ],
+        },
+        "feature": {
+            "title": "FeatureMapDiffMetric",
+            "purpose": "CNN backboneなどの中間feature mapの一致度を確認するmetricです。",
+            "stats": {
+                "layer_cosine_similarity": "layer全体のcosine類似度です。",
+                "mean_channel_cosine_similarity": "channelごとのcosine類似度の平均です。",
+                "min_channel_cosine_similarity": "もっとも悪いchannelのcosine類似度です。",
+                "spatial_mean_abs_error": "spatial位置ごとの平均絶対誤差です。",
+                "worst_sample_id": "そのlayerで最大誤差が出たsampleです。",
+                "heatmap_path": "保存されたspatial error heatmapのpathです。",
+            },
+            "thresholds": [
+                "layer_cosine_similarity >= 0.999 を初期目安にします。",
+                "深いlayerやタスクに近いlayerほどpost metricと合わせて確認します。",
+            ],
+            "notes": [
+                "min_channel_cosine_similarityが低い場合、特定channelだけ劣化している可能性があります。",
+                "heatmap previewで局所的なズレを確認できます。",
+            ],
+        },
+        "classification": {
+            "title": "Classification Metrics",
+            "purpose": "分類結果の一致度やlabelありaccuracyを確認するmetricです。",
+            "stats": {
+                "top1_match_rate": "referenceとtargetのtop-1予測一致率です。",
+                "top5_match_rate": "top-5集合の一致率です。",
+                "topk_ranking_match_rate": "ranking全体の一致率です。",
+                "kl_divergence": "reference分布からtarget分布へのKL divergenceです。",
+                "js_divergence": "対称的に見やすいJS divergenceです。",
+                "top1_accuracy": "labelに対するtop-1 accuracyです。",
+            },
+            "thresholds": [
+                "変換精度確認では top1_match_rate >= 0.99 を初期目安にします。",
+                "JS divergenceは0に近いほど良いです。",
+            ],
+            "notes": [
+                "reference自体が間違っていても一致は高くなるので、labelありaccuracyも別途見ると安心です。",
+                "logits比較よりpost metricの一致を最終判断に寄せます。",
+            ],
+        },
+        "detection": {
+            "title": "Detection Metrics",
+            "purpose": "検出結果のbox、class、score、簡易AP/mAPを確認するmetricです。",
+            "stats": {
+                "mean_iou": "対応付けられたboxの平均IoUです。",
+                "match_rate": "reference boxに対してtargetが対応付いた割合です。",
+                "class_match_rate": "対応box同士のclass一致率です。",
+                "mean_confidence_abs_diff": "対応box同士のconfidence差分平均です。",
+                "box_count_diff": "target box数 - reference box数です。",
+                "map": "指定IoU閾値群に対する簡易mAPです。",
+            },
+            "thresholds": [
+                "class_match_rate >= 0.99 を初期目安にします。",
+                "mAP deltaは用途により 0.001〜0.005 程度から確認します。",
+                "box_count_diffが大きい場合はNMSやscore threshold差を確認します。",
+            ],
+            "notes": [
+                "DetectionConsistencyMetricはreference vs targetの一致性を見ます。",
+                "DetectionAccuracyMetricはannotationsまたはreferenceをGT扱いしてAPを計算します。",
+            ],
+        },
+        "default": {
+            "title": "Metric Help",
+            "purpose": (
+                "選択中metricの説明が未登録です。raw metricは数値差分、"
+                "post metricはタスク出力の一致を確認します。"
+            ),
+            "stats": {
+                "value": "metricが出力した値です。意味はmetric実装またはREADMEを確認してください。",
+            },
+            "thresholds": [
+                "raw metricは完全一致ではなく許容範囲を見ます。",
+                "最終判断ではpost metricを優先します。",
+            ],
+            "notes": [
+                "独自metricを追加した場合はhelp catalogへ説明を追加すると運用しやすくなります。",
+            ],
+        },
     }
 
 

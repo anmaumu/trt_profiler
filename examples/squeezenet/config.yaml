@@ -1,88 +1,43 @@
 version: 1
 
-common:
-  model:
-    name: squeezenet1_1
-    source_path: examples/squeezenet/assets/model.onnx
-    format: onnx
-    tasks:
-      - classification
+model:
+  name: squeezenet1_1
+  path: examples/squeezenet/assets/model.onnx
+  tasks:
+    - classification
 
-  variants:
-    - name: ort_cpu_ref
-      backend: onnxruntime
-      role: reference
-      builder:
-        class: trt_profiler.builders.OnnxPassthroughBuilder
-        config: {}
-      runner:
-        class: trt_profiler.runners.OnnxRuntimeRunner
-        config:
-          providers:
-            - CPUExecutionProvider
+input:
+  type: npz
+  path: examples/squeezenet/inputs
+  pattern: "*.npz"
+  input_name: input_tensor
+  backend_name: data
+  npz_key: data
+  dtype: float32
 
-    - name: ort_cpu_target
-      backend: onnxruntime
-      role: target
-      builder:
-        class: trt_profiler.builders.OnnxPassthroughBuilder
-        config: {}
-      runner:
-        class: trt_profiler.runners.OnnxRuntimeRunner
-        config:
-          providers:
-            - CPUExecutionProvider
+outputs:
+  logits: squeezenet0_flatten0_reshape0
 
-  dataset:
-    type: npz_folder
-    config:
-      path: examples/squeezenet/inputs
-      pattern: "*.npz"
+variants:
+  - name: ort_cpu_ref
+    preset: ort_cpu
+  - name: ort_cpu_target
+    preset: ort_cpu
 
-  comparisons:
-    - name: ort_cpu_ref_vs_ort_cpu_target
-      reference: ort_cpu_ref
-      target: ort_cpu_target
+compare: configured
 
-  input_mapping:
-    ort_cpu_ref:
-      data: input_tensor
-    ort_cpu_target:
-      data: input_tensor
+metrics:
+  raw:
+    - tensor_diff:
+        outputs:
+          - logits
+        atol: 0.000001
+        rtol: 0.000001
+        percentiles:
+          - 95
+          - 99
 
-  output_mapping:
-    ort_cpu_ref:
-      logits: squeezenet0_flatten0_reshape0
-    ort_cpu_target:
-      logits: squeezenet0_flatten0_reshape0
-
-  metrics:
-    raw:
-      - name: logits_tensor_diff
-        class: trt_profiler.metrics.TensorDiffMetric
-        config:
-          outputs:
-            - logits
-          atol: 0.000001
-          rtol: 0.000001
-          percentiles:
-            - 95
-            - 99
-    post: []
-
-  report:
-    output_dir: examples/squeezenet/reports
-
-preprocess:
-  class: trt_profiler.preprocessors.NpzPreprocessor
-  config:
-    inputs:
-      - name: input_tensor
-        npz_key: data
-        dtype: float32
-
-postprocessors:
-  - name: identity
-    class: trt_profiler.postprocessors.IdentityPostprocessor
-    config: {}
-
+report:
+  output_dir: examples/squeezenet/reports
+  formats:
+    - json
